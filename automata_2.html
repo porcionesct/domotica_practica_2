@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autómatas y relé programable: Definición</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <header>
+        <h1> Autómatas y relés programables</h1>
+        <p>Práctica 2. Punto de luz. Autómata programable</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Práctica 2 (Punto de luz)</a></li>
+            <li><a href="rubrica_2.html">Rúbrica evaluación</a></li> 
+            <li class="active"><a href="automata_2.html">Autómata programable</a></li>
+            <li><a href="logo_2.html">Logo</a></li>
+            <li><a href="presupuesto.html">Presupuesto</a></li>
+            <li><a href="glosario.html">Glosario</a></li>
+            <li><a href="prl.html">Seguridad y PRL</a></li>   
+        </ul>
+    </nav>
+
+    <div class="container">
+<h2>2.- Punto de luz controlado mediante PLC / LOGO! controlada mediante Autómata Programable (PLC)</h2>
+
+        <div class="section">
+                        
+<h3 class="section-header">1. Asignación de señales en el autómata programable.</h3>
+
+          <ul>
+           <p><strong>Entradas digitales</strong></p>
+           <li>I0.0: Pulsador marcha (S1) — contacto NO.</li>
+           <li>I0.1: Pulsador paro (S1) — contacto NC.</li>
+           <li>I0.2: Pulsador marcha (S2) — contacto NO (solo se cablea el contacto de marcha).</li>
+
+           <p><strong>Salidas digitales</strong></p>
+           <li>Q0.0: Piloto verde (PV).</li>
+           <li>Q0.1: Piloto rojo (PR).</li>
+           <li>Q0.2: Bombilla (L).</li>
+          </ul>
+
+<h3 class="section-header">2. Programa básico en Ladder (S7-200)</h3>
+            <table>
+                <thead>
+                    <tr><th>Bloque / Segmento</th><th>Lógica</th><th>Función</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Segm. 1</strong></td><td>I0.0 → S M0.0 (1) &nbsp;|&nbsp; /I0.1 → R M0.0 (1)</td><td>Memoria de circuito activado</td></tr>
+                    <tr><td><strong>Segm. 2</strong></td><td>M0.0 → Q0.0 &nbsp;|&nbsp; /M0.0 → Q0.1</td><td>Piloto verde / piloto rojo</td></tr>
+                    <tr><td><strong>Segm. 3</strong></td><td>M0.0 · I0.2 → S Q0.2 (1)</td><td>Encendido de la bombilla solo con el circuito activado</td></tr>
+                    <tr><td><strong>Segm. 4</strong></td><td>/M0.0 → R Q0.2 (1)</td><td>Apagado al desactivar el circuito con S1 paro</td></tr>
+                </tbody>
+            </table>
+
+<h3 class="section-header">2.1. Mejora: programación con relé de impulsos</h3>
+            <table>
+                <thead>
+                    <tr><th>Bloque / Segmento</th><th>Lógica</th><th>Función</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>Segm. 3</strong></td><td>M0.0 · I0.2 + flanco P → conmuta M0.1 (telerruptor)</td><td>Cada pulsación de S2 cambia el estado de la luz</td></tr>
+                    <tr><td><strong>Segm. 4</strong></td><td>/M0.0 → R M0.1 (1)</td><td>Al desactivar el circuito se apaga la luz</td></tr>
+                    <tr><td><strong>Segm. 5</strong></td><td>M0.1 → Q0.2</td><td>Salida de la bombilla</td></tr>
+                </tbody>
+            </table>
+
+<h3 class="section-header">3. Esquema</h3>
+<p><strong>Esquema multifilar de la práctica 2.</strong></p>
+        
+<div class="automata-image">
+     <img id="myImg" class="esquema-ajustado" src="images_1/multifilar_automata_2.png" alt="Autómata S7 200 CPU200" style="cursor: pointer;">
+</div>
+
+          </div>
+<div id="myModal" class="modal">
+
+  <span class="close">&times;</span>
+
+  <img class="modal-content" id="img01">
+
+  <div id="caption"></div>
+
+</div>
+<script>
+// Obtener el modal
+var modal = document.getElementById("myModal");
+
+// Obtener la imagen y el elemento dentro del modal
+var img = document.getElementById("myImg");
+var modalImg = document.getElementById("img01");
+var captionText = document.getElementById("caption");
+
+img.onclick = function(){
+  modal.style.display = "block";
+  modalImg.src = this.src;
+  captionText.innerHTML = this.alt;
+}
+
+// Obtener el elemento <span> que cierra el modal
+var span = document.getElementsByClassName("close")[0];
+
+// Cuando el usuario hace clic en <span> (x), cierra el modal
+span.onclick = function() { 
+  modal.style.display = "none";
+}
+
+// Opcional: Cerrar el modal al hacer clic en cualquier parte fuera de la imagen
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+</body>
+</html>
